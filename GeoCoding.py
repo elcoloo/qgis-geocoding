@@ -113,6 +113,7 @@ class GeoCoding:
         geocoders = {
                 'Nominatim (Openstreetmap)' : 'Nominatim',
                 'Google' : 'GoogleV3',
+                'GCBA - USIG' : 'GeoUSIG',  #agrego la opcion
             }
         # Get current index
         try:
@@ -249,12 +250,15 @@ class GeoCoding:
         geocoder_class = str(self.get_config('GeocoderClass'))
 
         if not geocoder_class:
-            geocoder_class ='Nominatim'
+            geocoder_class ='Nominatim' #set for default
 
         if geocoder_class == 'Nominatim':
             return OsmGeoCoder()
         else:
-            return GoogleGeoCoder(self.get_config('googleKey'))
+            geocoder_class == 'GeoUSIG': #load class
+                return USIGGeoCoder()
+            else:
+                return GoogleGeoCoder(self.get_config('googleKey'))
 
 
 

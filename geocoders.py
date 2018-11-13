@@ -92,3 +92,27 @@ class GoogleGeoCoder():
             raise GeoCodeException(str(e))
 
 
+#Class Usig Geocoder
+class USIGGeoCoder():
+
+    url = 'http://ws.usig.buenosaires.gob.ar/geocoder/2.2/geocoding?cod_calle={address}'
+    reverse_url = 'http://ws.usig.buenosaires.gob.ar/geocoder/2.2/reversegeocoding?x={lat}&y={lon}'
+
+    def geocode(self, address):
+        try: 
+            url = self.url.format(**{'address': address.decode('utf8')})
+            logMessage(url)
+            results = json.loads(NAM.request(url, blocking=True)[1].decode('utf8'))
+            return [(rec['display_name'], (rec['lon'], rec['lat'])) for rec in results]
+        except Exception as e:
+            raise GeoCodeException(str(e))
+
+    def reverse(self, lon, lat):
+        """single result"""
+        try: 
+            url = self.reverse_url.format(**{'lon': lon, 'lat': lat})
+            logMessage(url)
+            rec = json.loads(NAM.request(url, blocking=True)[1].decode('utf8'))
+            return [(rec['display_name'], (rec['lon'], rec['lat']))]
+        except Exception as e:
+            raise GeoCodeException(str(e))
